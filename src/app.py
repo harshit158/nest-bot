@@ -2,6 +2,15 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 
+from src.settings import settings
+from foundry.observability import init_observability, ObservabilityConfig, get_logger, get_tracer
+
+config = ObservabilityConfig(app_name=settings.app_name)
+init_observability(config)
+
+logger = get_logger(__name__)
+tracer = get_tracer(__name__)
+
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "")
 
 from telegram import Update
@@ -14,10 +23,11 @@ from telegram.ext import (
 )
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(
-        "Hello! 👋 I am your Telegram bot."
-    )
-
+    with tracer.start_as_current_span("start_command"):
+        logger.info(f"Received /start command from user: {update.effective_user.id}")
+        await update.message.reply_text(
+            "Hello! 👋 I am your Telegram bot."
+        )
 
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(

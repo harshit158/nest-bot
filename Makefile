@@ -1,7 +1,7 @@
 .PHONY: run build
 
 run:
-	uv run python3 src/app.py
+	uv run python -m src.app
 
 build:
 	uv sync

@@ -6,6 +6,8 @@ readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
     "ipykernel>=7.1.0",
+    "pydantic-settings>=2.14.2",
     "python-dotenv>=1.2.1",
     "python-telegram-bot>=22.5",
+    "foundry @ git+https://github.com/harshit158/foundry.git@v0.2.0"
 ]
