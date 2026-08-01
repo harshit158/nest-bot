@@ -50,10 +50,18 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await context.bot.send_chat_action(chat_id=update.effective_chat.id, action="typing")
             
             # Process query using the LangChain React agent
-            response = process_query(update.message.text)
+            response, usage_cost = process_query(update.message.text)
             
             # Send response back to user
             await update.message.reply_text(response)
+            
+            # send cost information if available
+            if usage_cost:
+                await update.message.reply_text(
+                    f"💰 <code>({usage_cost.input_tokens}/{usage_cost.output_tokens} : {usage_cost.cost_str})</code>",
+                    parse_mode="HTML"
+                )
+
         except Exception as e:
             logger.error(f"Error handling message: {str(e)}", exc_info=True)
             await update.message.reply_text(
